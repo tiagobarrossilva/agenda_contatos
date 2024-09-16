@@ -1,0 +1,29 @@
+<div class="text-center"></div>
+    <h2>Editar usuario {{usuario.nome}}</h2>
+    
+    <form action="/usuario" method="patch" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Nome</label>
+            <input name="nome" value="{{usuario.nome}}" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail2" class="form-label">Contato</label>
+            <input name="contato" value="{{usuario.contato}}" type="text" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp">
+        </div>
+
+        {{!-- <div>
+            <img src="../../../uploads/img_perfil_usuario/{{usuario.imagem}}" alt="">
+           <input type="file" id="imageInput" accept="image/*">
+        </div> --}}
+
+        <div>
+            <input id="img-input" type="file" name="imagem">
+        </div>
+        <div id="img-container">
+            <img id="preview" src="">
+        </div>
+         
+        
+        
+    
+</div>
