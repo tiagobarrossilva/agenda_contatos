@@ -13,13 +13,11 @@ module.exports = class UsuarioController{
     }
 
     static async paginaEditarUsuario(req,res){
-        const {id} = req.params
-        const usuario = await UsuarioService.consultarUsuarioPorId(id)
+        const usuario = await UsuarioService.consultarUsuarioPorId(req.params.id)
         res.render('pages/editar',{usuario})
     }
 
     static async adicionarUsuario(req,res){
-
         let imagem = null
         if(req.file){
             imagem = req.file.filename
@@ -31,32 +29,39 @@ module.exports = class UsuarioController{
             imagem
         }
 
-        const objUsuarioArmazenado = await UsuarioService.cadastrarNovoUsuario(objUsuario)
-        if(objUsuarioArmazenado){
-            return res.redirect('/')
-        }
+        await UsuarioService.cadastrarNovoUsuario(objUsuario)
         return res.redirect('/')
-        
     }
 
-    // fazendo
     static async editarUsuario(req,res){
-        const {id} = req.params
-        const {nome,contato} = req.body
+        let usuario = await UsuarioService.consultarUsuarioPorId(req.body.id)
+                
+        let imagem = null
+        if(req.file){
+            if(usuario.imagem){
+                excluirImgPerfilUsuario(usuario.imagem)
+            }            
+            imagem = req.file.filename
+            usuario.imagem = imagem
+        }
 
+        usuario.nome = req.body.nome
+        usuario.contato = req.body.contato
 
+        await UsuarioService.editarUsuario(req.body.id,usuario)
+        return res.redirect('/')
     }
 
     static async excluirUsuario(req,res){
-        const {id} = req.params
         const usuario = await UsuarioService.consultarUsuarioPorId(req.params.id)
 
         const usuarioExcluido = await UsuarioService.excluirUsuario(usuario.id)
         if(usuarioExcluido){
-            excluirImgPerfilUsuario(usuario.imagem)
-            return res.status(200).send('Resposta com status 200 OK');
+            if(usuario.imagem){
+                excluirImgPerfilUsuario(usuario.imagem)
+            }            
+            return res.status(200).send('concluido');
         }
-        console.log('erro')
-        return
+        return res.status(500).send('erro');
     }
 }

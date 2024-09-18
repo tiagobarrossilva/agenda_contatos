@@ -2,7 +2,7 @@
 function excluirUsuario(){
     const id = document.getElementById("modalId").innerHTML
     
-    let url = 'http://localhost:3000/usuario/'+id
+    let url = 'http://localhost:3000/excluir/'+id
 
     fetch(url,{method: "DELETE",})
         .then(data => {

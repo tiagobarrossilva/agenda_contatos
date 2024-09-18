@@ -21,6 +21,9 @@ module.exports = class UsuarioService{
 
     static async cadastrarNovoUsuario(usuario){
         try{
+            if(!usuario.nome || !usuario.contato){
+                return false
+            }
             const usuarioDto = new UsuarioDto(usuario)
             const usuarioArmazenado = await UsuarioRepository.create(usuarioDto)
             return usuarioArmazenado
@@ -42,6 +45,15 @@ module.exports = class UsuarioService{
         try{
             await UsuarioRepository.destroy({where:{id:id}})
             return true
+        } catch(erro){
+            return false
+        }
+    }
+
+    static async editarUsuario(id,usuario){
+        try{
+            const usuarioDto = new UsuarioDto(usuario)
+            await UsuarioRepository.update(usuarioDto,{where: {id:id}})
         } catch(erro){
             return false
         }

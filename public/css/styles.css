@@ -25,3 +25,7 @@
   text-decoration: none;
   color: white;
 }
+
+.formularioAddContato{
+  max-width: 30rem;
+}
