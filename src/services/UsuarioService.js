@@ -54,6 +54,7 @@ module.exports = class UsuarioService{
         try{
             const usuarioDto = new UsuarioDto(usuario)
             await UsuarioRepository.update(usuarioDto,{where: {id:id}})
+            return true
         } catch(erro){
             return false
         }

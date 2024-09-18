@@ -23,13 +23,7 @@ module.exports = class UsuarioController{
             imagem = req.file.filename
         }
         
-        const objUsuario = {
-            nome: req.body.nome,
-            contato: req.body.contato,
-            imagem
-        }
-
-        await UsuarioService.cadastrarNovoUsuario(objUsuario)
+        await UsuarioService.cadastrarNovoUsuario({nome:req.body.nome, contato: req.body.contato, imagem})
         return res.redirect('/')
     }
 

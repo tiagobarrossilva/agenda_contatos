@@ -1,11 +1,8 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
-
-const sessionConfig = require('./src/config/sessionConfig')
 const conn = require('./src/config/connectDatabaseConfig')
 
 const app = express();
-app.use(sessionConfig)
 
 // necessario para ler o body
 app.use(express.urlencoded({extended: true}))
@@ -15,9 +12,7 @@ app.use(express.json())
 const Usuario = require('./src/models/Usuario')
 
 //rotas
-//const autenticacaoRoutes = require('./src/routes/autenticacaoRoutes')
 const usuarioRoutes = require('./src/routes/usuarioRoutes')
-// app.use('/',autenticacaoRoutes)
 app.use('/',usuarioRoutes)
 
 // template egine

@@ -16,7 +16,7 @@ const Usuario = db.define('Usuario',{
     contato:{
         type: DataTypes.STRING,
         require: true,
-        allowNull: false, //não permite valor nulo
+        allowNull: false,
     },
     imagem:{
         type: DataTypes.STRING,
