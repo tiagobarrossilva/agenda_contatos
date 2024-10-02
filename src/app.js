@@ -1,6 +1,5 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
-const conn = require('./src/config/connectDatabaseConfig')
 
 const app = express();
 
@@ -9,10 +8,10 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
 //modelos
-const Usuario = require('./src/models/Usuario')
+const Usuario = require('./models/Usuario')
 
 //rotas
-const usuarioRoutes = require('./src/routes/usuarioRoutes')
+const usuarioRoutes = require('./routes/usuarioRoutes')
 app.use('/',usuarioRoutes)
 
 // template egine
@@ -26,10 +25,4 @@ app.set('views','src/views') //pasta onde ficam as views
 // configuração do diretorio com os arquivos estaticos
 app.use(express.static('./'))
 
-conn
-//.sync({force:true})
-.sync()
-.then(() =>{
-    app.listen(3000)
-})
-.catch((erro) => console.log(erro))
+module.exports = app
