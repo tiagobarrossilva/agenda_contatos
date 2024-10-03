@@ -1,5 +1,5 @@
 const UsuarioRepository = require('../repositories/UsuarioRepository')
-const UsuarioDto = require('../dtos/UsuarioDto')
+const excluirImgPerfilUsuario = require('../helpers/excluirImgPerfilUsuario')
 
 module.exports = class UsuarioService{
 
@@ -20,12 +20,8 @@ module.exports = class UsuarioService{
     }
 
     static async cadastrarNovoUsuario(usuario){
-        try{
-            if(!usuario.nome || !usuario.contato){
-                return false
-            }
-            const usuarioDto = new UsuarioDto(usuario)
-            const usuarioArmazenado = await UsuarioRepository.create(usuarioDto)
+        try{                      
+            const usuarioArmazenado = await UsuarioRepository.create(usuario)
             return usuarioArmazenado
         } catch(erro){
             return false
@@ -43,6 +39,10 @@ module.exports = class UsuarioService{
 
     static async excluirUsuario(id){
         try{
+            const usuario = await UsuarioRepository.findByPk(id)
+            if(usuario.imagem){
+                excluirImgPerfilUsuario(usuario.imagem)
+            }
             await UsuarioRepository.destroy({where:{id:id}})
             return true
         } catch(erro){
@@ -52,8 +52,15 @@ module.exports = class UsuarioService{
 
     static async editarUsuario(id,usuario){
         try{
-            const usuarioDto = new UsuarioDto(usuario)
-            await UsuarioRepository.update(usuarioDto,{where: {id:id}})
+            const usuarioDadosAntigos = await UsuarioRepository.findByPk(id)
+            if(usuario.imagem){
+                if(usuarioDadosAntigos.imagem){                
+                    excluirImgPerfilUsuario(usuarioDadosAntigos.imagem)                                      
+                }
+            } else{
+                usuario.imagem = usuarioDadosAntigos.imagem
+            }
+            await UsuarioRepository.update(usuario,{where: {id:id}})
             return true
         } catch(erro){
             return false

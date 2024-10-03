@@ -1,5 +1,5 @@
 const UsuarioService = require('../services/UsuarioService')
-const excluirImgPerfilUsuario = require('../helpers/excluirImgPerfilUsuario')
+const UsuarioDto = require('../dtos/UsuarioDto')
 
 module.exports = class UsuarioController{
 
@@ -14,48 +14,54 @@ module.exports = class UsuarioController{
 
     static async paginaEditarUsuario(req,res){
         const usuario = await UsuarioService.consultarUsuarioPorId(req.params.id)
-        res.render('pages/editar',{usuario})
+        try{
+            let usuarioDto = new UsuarioDto(usuario)
+            usuarioDto.id = req.params.id
+            return res.render('pages/editar',{usuarioDto})            
+        } catch(erro){
+            console.log(erro)
+            return res.status(500)
+        }
     }
 
     static async adicionarUsuario(req,res){
-        let imagem = null
         if(req.file){
-            imagem = req.file.filename
+            req.body.imagem = req.file.filename
+        } else{
+            req.body.imagem = null
+        }
+
+        try{
+            await UsuarioService.cadastrarNovoUsuario(new UsuarioDto(req.body))
+        } catch(erro){
+            console.log(erro)
         }
         
-        await UsuarioService.cadastrarNovoUsuario({nome:req.body.nome, contato: req.body.contato, imagem})
         return res.redirect('/')
     }
 
     static async editarUsuario(req,res){
-        let usuario = await UsuarioService.consultarUsuarioPorId(req.body.id)
-                
-        let imagem = null
         if(req.file){
-            if(usuario.imagem){
-                excluirImgPerfilUsuario(usuario.imagem)
-            }            
-            imagem = req.file.filename
-            usuario.imagem = imagem
+            req.body.imagem = req.file.filename
+        } else{
+            req.body.imagem = null
         }
 
-        usuario.nome = req.body.nome
-        usuario.contato = req.body.contato
-
-        await UsuarioService.editarUsuario(req.body.id,usuario)
+        try{
+            await UsuarioService.editarUsuario(req.body.id, new UsuarioDto(req.body))
+        } catch(erro){
+            console.log(erro)
+        }
+        
         return res.redirect('/')
     }
 
     static async excluirUsuario(req,res){
-        const usuario = await UsuarioService.consultarUsuarioPorId(req.params.id)
-
-        const usuarioExcluido = await UsuarioService.excluirUsuario(usuario.id)
-        if(usuarioExcluido){
-            if(usuario.imagem){
-                excluirImgPerfilUsuario(usuario.imagem)
-            }            
-            return res.status(200).send('concluido');
+        const usuarioExcluido = await UsuarioService.excluirUsuario(req.params.id)
+        if(usuarioExcluido){                 
+            return res.status(200).send('concluido')
         }
-        return res.status(500).send('erro');
+
+        return res.status(500).send('erro')
     }
 }
